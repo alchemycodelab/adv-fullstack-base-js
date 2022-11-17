@@ -1,6 +1,4 @@
 import {
-  type FC,
-  type ReactElement,
   useState,
   useEffect,
 } from 'react'
@@ -9,14 +7,9 @@ import buttonFn from './button'
 import buttonStyles from './button.module.css'
 import listItemFn from './list-item'
 import listItemStyles from './list-item.module.css'
-import { type Foo } from '../../common/foo.js'
 import fooListItemFn from './foo-list-item'
 
-export type Props = {}
-
-export type Component = FC<Props>
-
-export default (): FC<Props> => {
+export default () => {
   const ListItem = listItemFn(listItemStyles.foo)
   const CancelButton = buttonFn(buttonStyles.removeListItem)
   const EditButton = buttonFn(buttonStyles.editListItem)
@@ -29,12 +22,12 @@ export default (): FC<Props> => {
     DeleteButton,
     ListItem,
   )
-  const component = (props: Props): ReactElement => {
+  const component = (props) => {
     // Simply accepting the type we get from the server is inherently dangerous,
     // but for the simplicity of the example we will forego validation.
-    const [foos, setFoos ] = useState<ReadonlyArray<Foo>>([])
+    const [foos, setFoos ] = useState([])
     const [loadingFoos, setLoadingFoos] = useState(false)
-    const [error, setError ] = useState<{} | null>(null)
+    const [error, setError ] = useState(null)
     const loadFoos = () => {
       setLoadingFoos(true)
       getFoos()
@@ -51,7 +44,7 @@ export default (): FC<Props> => {
             key={foo.id}
             foo={foo}
             onDelete={() => deleteFoo(foo.id).then(loadFoos)}
-            onUpdate={(updated: Foo) => updateFoo(updated).then(loadFoos)}
+            onUpdate={(updated) => updateFoo(updated).then(loadFoos)}
           />
         })}
       </ul>

@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import pool from './database.js'
 
-export default function setupDb(): Promise<void> {
+export default function setupDb() {
   return fs
     .readFile(path.resolve(`./sql/setup.sql`), { encoding: 'utf-8' })
     .then((sql) => pool.query(sql))

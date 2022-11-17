@@ -7,7 +7,7 @@
  ******************************************************************************/
 
 import dotenv from 'dotenv'
-import express, { type Request, type Response } from 'express'
+import express from 'express'
 import path from 'node:path'
 import routes from './routes.js'
 import errorHandler from './middleware/error.js'
@@ -30,7 +30,7 @@ app.use(errorHandler)
 // Sending our index.html to the client on a 404 is required to make HTML5
 // routes. HTML5 routes are the routes using the paths instead of the
 // fake paths after the anchor (#) in the URL.
-app.all('*', (req: Request, res: Response) => {
+app.all('*', (req, res) => {
   res.status(404).sendFile(path.join(publicDir, 'index.html'))
 })
 

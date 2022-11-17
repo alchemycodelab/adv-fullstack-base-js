@@ -1,16 +1,14 @@
-import { type Request, type Response, type NextFunction, Router } from 'express'
+import { Router } from 'express'
 import db from '../database.js'
-import { type Foo } from '../../common/foo.js'
-import { type QueryResult } from 'pg'
 
 
 export default Router()
-  .get('/', (req: Request, res: Response, next: NextFunction) => {
+  .get('/', (req, res, next) => {
     return db.query('select * from foos;')
-      .then((result: QueryResult<Foo>) => res.send(result.rows))
+      .then((result) => res.send(result.rows))
       .catch(next)
   })
-  .put('/:id', (req: Request, res: Response, next: NextFunction) => {
+  .put('/:id', (req, res, next) => {
     if(req.params.id != null && Number.isInteger(parseInt(req.params.id))) {
       console.log(req.body)
       return db.query('update foos set foo = $1 where foos.id = $2;', [req.body.foo, req.params.id])
@@ -23,7 +21,7 @@ export default Router()
       res.status(400)
     }
   })
-  .delete('/:id', (req: Request, res: Response, next: NextFunction) => {
+  .delete('/:id', (req, res, next) => {
     if(req.params.id != null && Number.isInteger(parseInt(req.params.id))) {
       return db.query('delete from foos where foos.id = $1;', [req.params.id])
         .then(() => res.sendStatus(201))

@@ -1,18 +1,16 @@
-import { type Foo } from '../../common/foo'
-import { type ServiceResponse } from './service-utils'
 
-export const getFoos = (): Promise<ServiceResponse<ReadonlyArray<Foo>>> => {
+export const getFoos = () => {
   return fetch('/api/v1/foos').then((res) => {
     return res.json().then((json) => {
       return {
-        json: json as ReadonlyArray<Foo>,
+        json,
         status: res.status,
       }
     })
   })
 }
 
-export const updateFoo = (foo: Foo): Promise<ServiceResponse<unknown>> => {
+export const updateFoo = (foo) => {
   return fetch(
     `/api/v1/foos/${foo.id}`,
     {
@@ -28,7 +26,7 @@ export const updateFoo = (foo: Foo): Promise<ServiceResponse<unknown>> => {
   })
 }
 
-export const deleteFoo = (id: string): Promise<ServiceResponse<unknown>> => {
+export const deleteFoo = (id) => {
   return fetch(`/api/v1/foos/${id}`, { method: 'DELETE' }).then((res) => {
     return {
       json: null,

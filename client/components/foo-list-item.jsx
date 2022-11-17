@@ -1,32 +1,19 @@
 import React, {
-  type FC,
-  type ReactElement,
   useState,
 } from 'react'
-import { type Foo } from '../../common/foo.js'
-import { type Component as ListItemComponent } from './list-item'
-import { type Component as ButtonComponent } from './button'
-
-export type Props = {
-  foo: Foo,
-  onDelete: () => void,
-  onUpdate: (foo: Foo) => void,
-}
-
-export type Component = FC<Props>
 
 export default (
-  CancelButton: ButtonComponent,
-  SaveButton: ButtonComponent,
-  EditButton: ButtonComponent,
-  DeleteButton: ButtonComponent,
-  ListItem: ListItemComponent,
-): FC<Props> => {
-  const component = (props: Props): ReactElement => {
+  CancelButton,
+  SaveButton,
+  EditButton,
+  DeleteButton,
+  ListItem,
+) => {
+  const component = (props) => {
 
     const [isEditing, setIsEditing] = useState(false)
     const [editFoo, setEditFoo] = useState(props.foo.foo)
-    const save = (e: React.FormEvent<HTMLFormElement>) => {
+    const save = (e) => {
       e.preventDefault()
       setIsEditing(false)
       props.onUpdate({...props.foo, foo: editFoo })

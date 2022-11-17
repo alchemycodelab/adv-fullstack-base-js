@@ -1,15 +1,4 @@
-import {
-  type Request,
-  type Response,
-  type NextFunction,
-  type ErrorRequestHandler,
-} from 'express'
-const handler: ErrorRequestHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const handler = (err, req, res, next,) => {
   const status = err.status || 500;
 
   res.status(status);

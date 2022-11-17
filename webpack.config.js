@@ -33,7 +33,7 @@ const env = Object.fromEntries(
 export default {
   // All Webpack bundles require a single entry point from which the entire
   // bundling process starts.
-  entry: './client/app.tsx',
+  entry: './client/app.jsx',
   mode: process.env.NODE === 'production' ? 'production' : 'development',
   // This indicates how and where the final output is bundled.
   output: {
@@ -100,7 +100,7 @@ export default {
     // processing code above this configuration in this file.
     new webpack.EnvironmentPlugin(env),
     // Typically we don't need to copy files manually from Webpack. If we
-    // statically refer to the file correctly (such as an import in a .js/ts
+    // statically refer to the file correctly (such as an import in a .js/js
     // file, or an <img src="...">, Webpack will detect that properly and ensure
     // the file is included and its path is kept consistently working. But
     // sometimes we need assets dynamically, or Webpack otherwise just doesn't
@@ -120,10 +120,6 @@ export default {
       process: 'process/browser',
       React: 'react',
     }),
-    // Prevent Webpack from rebuilding when the css.d.ts files are written out.
-    new webpack.WatchIgnorePlugin({
-      paths: [/css\.d\.ts$/],
-    }),
   ],
   resolve: {
     alias: {
@@ -132,7 +128,7 @@ export default {
       // added process package.
       process: 'process/browser',
     },
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.js', '.jsx'],
   },
   module: {
     // Each set of rules here indicates how a specific kind of asset is
@@ -149,15 +145,6 @@ export default {
           loader: 'babel-loader',
         },
       },
-      // TypeScript support. See also the resolve.extensions section for
-      // including them by file type.
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'ts-loader',
-        },
-      },
       {
         test: /\.css$/,
         use: [
@@ -167,13 +154,6 @@ export default {
           // plugins section. This plugin must be the last in order in order to
           // work correctly (and thus needs to be on the top).
           MiniCssExtractPlugin.loader,
-          // This loader makes CSS Modules type safe with TypeScript files.
-          {
-            loader: 'css-modules-typescript-loader',
-            options: {
-              mode: process.env.CI ? 'verify' : 'emit'
-            },
-          },
           {
             loader: 'css-loader',
             options: {
