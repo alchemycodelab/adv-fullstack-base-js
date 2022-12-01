@@ -1,5 +1,5 @@
 import {
-  useState,
+  useContext,
   useEffect,
 } from 'react'
 import { deleteFoo, getFoos, updateFoo } from '../services/foos'
@@ -8,8 +8,13 @@ import buttonStyles from './button.module.css'
 import listItemFn from './list-item'
 import listItemStyles from './list-item.module.css'
 import fooListItemFn from './foo-list-item'
-import ReducerContext from '../reducer-provider.jsx'
-import { foosLoadErrorAction, foosLoadStartAction, foosLoadSuccessAction } from '../actions/foo'
+import { Context as ReducerContext } from '../reducer-provider.jsx'
+import {
+  foosLoadErrorAction,
+  foosLoadStartAction,
+  foosLoadSuccessAction,
+} from '../actions/foo.js'
+import { timeout } from '../../common/timeout.js'
 
 export default () => {
   const ListItem = listItemFn(listItemStyles.foo)
@@ -26,15 +31,16 @@ export default () => {
   )
   const component = (props) => {
     const { state, dispatch } = useContext(ReducerContext)
+    console.log('foos', state.foos.fooList)
     const loadFoos = () => {
-      // setLoadingFoos(true)
       dispatch(foosLoadStartAction())
-      return getFoos()
-        .then(res => {
+      return Promise.all([getFoos(), timeout(3000)])
+        .then(([res]) => {
+          console.log('got response', res)
           if(res.status < 400) {
-            foosLoadSuccessAction(res.json)
+            dispatch(foosLoadSuccessAction(res.json))
           } else {
-            foosLoadErrorAction(res.json)
+            dispatch(foosLoadErrorAction(res.json))
           }
         })
         .catch(e => dispatch(foosLoadErrorAction(e)))
@@ -42,23 +48,30 @@ export default () => {
     useEffect(() => {
       loadFoos()
     }, [])
-    if(state.foos.foosList.length > 0) {
-      return <ul>
-        {state.foos.foosList.map((foo) => {
-          return <FooListItem
-            key={foo.id}
-            foo={foo}
-            onDelete={() => deleteFoo(foo.id).then(loadFoos)}
-            onUpdate={(updated) => updateFoo(updated).then(loadFoos)}
-          />
-        })}
-      </ul>
-    } else if(error != null) {
-      return <span style={{color: 'red'}}>{JSON.stringify(error)}</span>
-    } else if(!loadingFoos) {
-      return <span>No Foos found!</span>
-    } else {
-      return <span>Loading Foos!</span>
+    switch(state.foos.loadingMode) {
+      case 'loading':
+        return <span>Loading Foos!</span>
+      case 'error':
+        return <span style={{color: 'red'}}>{JSON.stringify(error)}</span>
+      case 'success':
+        if(state.foos.fooList.length > 0) {
+          return <ul>
+            {state.foos.fooList.map((foo) => {
+              return <FooListItem
+                key={foo.id}
+                foo={foo}
+                onDelete={() => deleteFoo(foo.id).then(loadFoos)}
+                onUpdate={(updated) => updateFoo(updated).then(loadFoos)}
+              />
+            })}
+          </ul>
+        } else {
+          return <span>No Foos found!</span>
+        }
+      case 'initial':
+        return <></>
+      default:
+        throw new Error(`Unknown loading mode '${state.foos.loadingMode}'.`)
     }
   }
   component.displayName = 'FooList'

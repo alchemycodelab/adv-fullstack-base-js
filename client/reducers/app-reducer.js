@@ -21,7 +21,7 @@ export const reducer = (state, action) => {
         ...state,
         foos: {
           ...state.foos,
-          foosList: [],
+          fooList: [],
           loadingMode: 'error',
           error: action.error,
         },
@@ -31,8 +31,8 @@ export const reducer = (state, action) => {
         ...state,
         foos: {
           ...state.foos,
-          foosList: action.foos,
-          loadingMode: 'error',
+          fooList: action.foos,
+          loadingMode: 'success',
           error: null,
         },
       }

@@ -6,7 +6,7 @@ import React, {
 import { reducer as appReducer, initialState } from './reducers/app-reducer'
 
 export const Context = createContext({
-  state: State,
+  state: initialState,
   dispatch: (_) => undefined,
 })
 

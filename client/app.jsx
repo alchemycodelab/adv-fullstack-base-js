@@ -9,6 +9,7 @@ import catListFn from './components/cat-list'
 import dashboardFn from './components/dashboard'
 import Layout from './layout'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Reduced } from './reducer-provider'
 
 const FooList = fooListFn()
 const CatList = catListFn()
@@ -18,14 +19,16 @@ container.id = 'app'
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route element={ <Layout /> }>
-          <Route index element={ <Dashboard /> } />
-          <Route path="foos" element={ <FooList /> } />
-          <Route path="cats" element={ <CatList /> } />
-        </Route>
-      </Routes>
-    </Router>
+    <Reduced>
+      <Router>
+        <Routes>
+          <Route element={ <Layout /> }>
+            <Route index element={ <Dashboard /> } />
+            <Route path="foos" element={ <FooList /> } />
+            <Route path="cats" element={ <CatList /> } />
+          </Route>
+        </Routes>
+      </Router>
+    </Reduced>
   </React.StrictMode>
 );
