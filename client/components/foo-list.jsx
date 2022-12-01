@@ -8,6 +8,8 @@ import buttonStyles from './button.module.css'
 import listItemFn from './list-item'
 import listItemStyles from './list-item.module.css'
 import fooListItemFn from './foo-list-item'
+import ReducerContext from '../reducer-provider.jsx'
+import { foosLoadErrorAction, foosLoadStartAction, foosLoadSuccessAction } from '../actions/foo'
 
 export default () => {
   const ListItem = listItemFn(listItemStyles.foo)
@@ -23,23 +25,26 @@ export default () => {
     ListItem,
   )
   const component = (props) => {
-    // Simply accepting the type we get from the server is inherently dangerous,
-    // but for the simplicity of the example we will forego validation.
-    const [foos, setFoos ] = useState([])
-    const [loadingFoos, setLoadingFoos] = useState(false)
-    const [error, setError ] = useState(null)
+    const { state, dispatch } = useContext(ReducerContext)
     const loadFoos = () => {
-      setLoadingFoos(true)
-      getFoos()
-        .then(res => (res.status < 400 ? setFoos : setError)(res.json))
-        .finally(() => setLoadingFoos(false))
+      // setLoadingFoos(true)
+      dispatch(foosLoadStartAction())
+      return getFoos()
+        .then(res => {
+          if(res.status < 400) {
+            foosLoadSuccessAction(res.json)
+          } else {
+            foosLoadErrorAction(res.json)
+          }
+        })
+        .catch(e => dispatch(foosLoadErrorAction(e)))
     }
     useEffect(() => {
       loadFoos()
     }, [])
-    if(foos.length > 0) {
+    if(state.foos.foosList.length > 0) {
       return <ul>
-        {foos.map((foo) => {
+        {state.foos.foosList.map((foo) => {
           return <FooListItem
             key={foo.id}
             foo={foo}
